@@ -25,7 +25,7 @@ BaselineOfPolyMath >> baseline: spec [
 			spec repository: 'github://PolyMathOrg/PolyMath/src'.
 			spec
 				baseline: 'SMark'
-					with: [ spec repository: 'github://smarr/SMark:v1.0.4' ];
+					with: [ spec repository: 'github://smarr/SMark:v1.0.4' ].
 			spec
 				package: 'ExtendedNumberParser';
 				package: 'Math-Accuracy-Core';
