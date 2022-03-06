@@ -23,19 +23,19 @@ PMAccuracyTestExample >> argumentWith: key [
 
 { #category : #tests }
 PMAccuracyTestExample >> checkAaa [
-	self argument first
+	(self argumentWith: 'Aaa') first
 		ifTrue: [ ^ #(1 1) ].
 	^ Array with: (4 + (0.4 * Random new next)) with: 2
 ]
 
 { #category : #tests }
 PMAccuracyTestExample >> checkBbb [
-	^ self argument first size + self parameter first
+	^ (self argumentWith: 'Bbb') first size + self parameter first
 ]
 
 { #category : #tests }
 PMAccuracyTestExample >> checkCcc [
-	^ self argument first + (0.01 * self parameter first)
+	^ (self argumentWith: 'Ccc') first + (0.01 * self parameter first)
 ]
 
 { #category : #tests }
@@ -154,7 +154,7 @@ PMAccuracyTestExample >> tearDown [
 PMAccuracyTestExample >> testGetterAaa [
 ^Array
 	with: self parameter
-	with: self argument
+	with: (self argumentWith: 'Aaa')
 	with: (self resultsAt: 'Aaa')
 	with: (self numberOfDifferentParametersAt: 'Aaa')
 	with: (self numberOfDifferentResultsAt: 'Aaa')
@@ -164,7 +164,7 @@ PMAccuracyTestExample >> testGetterAaa [
 PMAccuracyTestExample >> testGetterBbb [
 ^Array
 	with: self parameter
-	with: self argument
+	with: (self argumentWith: 'Bbb')
 	with: (self resultsAt: 'Bbb')
 	with: (self numberOfDifferentParametersAt: 'Bbb')
 	with: (self numberOfDifferentResultsAt: 'Bbb')
