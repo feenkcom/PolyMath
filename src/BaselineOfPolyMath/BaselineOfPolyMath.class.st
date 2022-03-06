@@ -22,18 +22,14 @@ BaselineOfPolyMath >> baseline: spec [
 		for: #common
 		do: [
 			spec blessing: #baseline.
-			spec repository: 'github://PolyMathOrg/PolyMath/src'.
 			spec
 				baseline: 'SMark'
-					with: [ spec repository: 'github://smarr/SMark:v1.0.4' ];
-				baseline: 'XMLWriter'
-					with: [ spec
-						repository: 'github://pharo-contributions/XML-XMLWriter:2.9.x/src' ].
+					with: [ spec repository: 'github://smarr/SMark:v1.0.4' ].
 			spec
 				package: 'ExtendedNumberParser';
 				package: 'Math-Accuracy-Core';
 				package: 'Math-Accuracy-ODE'
-					with: [ spec requires: #('Math-ODE' 'XMLWriter') ];
+					with: [ spec requires: #('Math-ODE') ];
 				package: 'Math-ArbitraryPrecisionFloat'
 					with: [ spec requires: #('ExtendedNumberParser') ];
 				package: 'Math-AutomaticDifferenciation'
@@ -41,7 +37,7 @@ BaselineOfPolyMath >> baseline: spec [
 				package: 'Math-Benchmarks-KDTree'
 					with: [ spec requires: #('Math-KDTree' 'SMark') ];
 				package: 'Math-Benchmarks-ODE'
-					with: [ spec requires: #('Math-ODE' 'SMark' 'XMLWriter') ];
+					with: [ spec requires: #('Math-ODE' 'SMark') ];
 				package: 'Math-Chromosome'
 					with: [ spec requires: #('Math-Core') ];
 				package: 'Math-Clustering'

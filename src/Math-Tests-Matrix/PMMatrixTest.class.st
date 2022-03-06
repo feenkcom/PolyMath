@@ -76,16 +76,20 @@ PMMatrixTest >> testCholeskyDecomposition [
 	| matrix upperTriangular expected |
 	
 	matrix := PMMatrix rows: #(
-		(4 12 -16)
-		(12 37 -43)
-		(-16 -43 98)).
+		(4 20 8 2 18)
+		(20 116 80 18 126)
+		(8 80 117 32 135)
+		(2 18 32 73 109)
+		(18 126 135 109 272)).
 		
 	upperTriangular := matrix choleskyDecomposition.
 	
 	expected := PMMatrix rows: #(
-		(2 6 -8)
-		(0 1 5)
-		(0 0 3)).
+		(2 10 4 1 9)
+		(0 4 10 2 9)
+		(0 0 1 8 9)
+		(0 0 0 2 5)
+		(0 0 0 0 2)).
 		
 	self assert: upperTriangular equals: expected.
 ]
@@ -195,6 +199,20 @@ PMMatrixTest >> testFlattenRows [
 	| m |
 	m := PMMatrix rows: #(#(1 2 3) #(4 5 6) #(7 8 9)).
 	self assert: m flattenRows equals: #(1 2 3 4 5 6 7 8 9) asPMVector
+]
+
+{ #category : #tests }
+PMMatrixTest >> testIdentityMatrix [
+	|expectedIdentityMatrix identityMatrix|
+
+	expectedIdentityMatrix := PMMatrix zerosRows: 3 cols: 3.
+
+	expectedIdentityMatrix at: 1 at: 1 put: 1.
+	expectedIdentityMatrix at: 2 at: 2 put: 1.
+	expectedIdentityMatrix at: 3 at: 3 put: 1.
+
+	identityMatrix := PMMatrix identity: 3.
+	self assert: identityMatrix equals: expectedIdentityMatrix.
 ]
 
 { #category : #tests }
@@ -471,11 +489,20 @@ PMMatrixTest >> testMatrixHash [
 ]
 
 { #category : #'linear algebra' }
-PMMatrixTest >> testMatrixInitialize [
-	| a |
-	a := PMMatrix new initialize: 2.
-	self assert: a numberOfRows equals: 2.
-	self assert: a numberOfColumns equals: 2
+PMMatrixTest >> testMatrixInitializationWithNegativeDimensions [
+	
+	" matrices with negative dimension and zero dimension should not be allowed."
+	self should: [ PMMatrix new: -2 ] raise: AssertionFailure .
+	self should: [ PMMatrix rows: 0 columns: 4 ] raise: AssertionFailure.
+]
+
+{ #category : #'linear algebra' }
+PMMatrixTest >> testMatrixInitializeSquare [
+	| aPMMatrix |
+	aPMMatrix := PMMatrix new initializeSquare: 2.
+	self assert: aPMMatrix numberOfRows equals: 2.
+	self assert: aPMMatrix numberOfColumns equals: 2.
+
 ]
 
 { #category : #'linear algebra' }
@@ -527,6 +554,15 @@ PMMatrixTest >> testMatrixMultiply [
 	self assert: ((c rowAt: 2) at: 1) equals: 18.
 	self assert: ((c rowAt: 2) at: 2) equals: 14.
 	self assert: ((c rowAt: 2) at: 3) equals: 4
+]
+
+{ #category : #'linear algebra' }
+PMMatrixTest >> testMatrixNew [
+	| aPMMatrix |
+	aPMMatrix  := PMMatrix new: 3.
+	self assert: aPMMatrix numberOfRows equals: 3.
+	self assert: aPMMatrix numberOfColumns equals: 3.
+
 ]
 
 { #category : #'linear algebra' }
@@ -598,6 +634,56 @@ PMMatrixTest >> testPrintOn [
 	stream := String new writeStream.
 	m := PMMatrix new.
 	m printOn: stream
+]
+
+{ #category : #tests }
+PMMatrixTest >> testRaisedToNegativeInteger [  
+
+	|aPMMatrix expected|
+	
+	aPMMatrix := PMMatrix rows: #(#(3 1) #(1 1)).
+	
+	aPMMatrix := aPMMatrix raisedTo: -2.
+	
+	expected := PMMatrix rows: #(#(0.5 -1) #(-1 2.5)).
+	self assert: aPMMatrix equals: expected.
+]
+
+{ #category : #tests }
+PMMatrixTest >> testRaisedToNonSquareMatrix [
+
+	|aPMMatrix|
+	
+	aPMMatrix := PMMatrix rows: #(#(3 1 4) #(1 1 2)).
+	
+	self should: [ aPMMatrix raisedTo: 3 ] raise: AssertionFailure.
+	
+]
+
+{ #category : #tests }
+PMMatrixTest >> testRaisedToPositiveInteger [ 
+
+	|aPMMatrix expected|
+	
+	aPMMatrix := PMMatrix rows: #(#(3 1) #(1 1)).
+	
+	aPMMatrix := aPMMatrix raisedTo: 3.
+	
+	expected := PMMatrix rows: #(#(34 14) #(14 6)).
+	self assert: aPMMatrix equals: expected.
+]
+
+{ #category : #tests }
+PMMatrixTest >> testRaisedToZero [
+
+	|aPMMatrix expected|
+	
+	aPMMatrix := PMMatrix rows: #(#(3 1) #(1 1)).
+	
+	aPMMatrix := aPMMatrix raisedTo: 0.
+	
+	expected := PMMatrix rows: #( #(1 0) #(0 1)).
+	self assert: aPMMatrix equals: expected.
 ]
 
 { #category : #comparing }
@@ -703,6 +789,29 @@ PMMatrixTest >> testSkalarMultiplication [
 	r := 2.0 * a.
 	self assert: r equals: (PMMatrix rows: #(#(2.0 4.0) #(4.0 2.0))).
 	self assert: r class equals: PMSymmetricMatrix
+]
+
+{ #category : #tests }
+PMMatrixTest >> testStrassenProductWithMatrix [
+		
+	| aPMMatrix expected strassenProduct |
+	
+	aPMMatrix := PMMatrix rows: #( (1 2 3 4) (1 0 1 2) (2 3 1 4) (4 3 2 2)).
+	expected  := PMMatrix rows: #( (30 12 27 24) (12 6 11 10) (27 11 30 27) (24 10 27 33)).
+	strassenProduct := aPMMatrix transpose strassenProductWithMatrix: aPMMatrix.
+	self assert: strassenProduct equals: expected.
+]
+
+{ #category : #tests }
+PMMatrixTest >> testStrassenProductWithMatrixWithInvalidShapes [
+		
+	| aPMMatrix |
+	
+	"all the dimension of the matrices should be a power of 2 for strassen multiplication"
+	aPMMatrix := PMMatrix rows: #( (1 2 3) (1 0 1) (2 3 1) (2 0 1)).
+	
+	self should: [ aPMMatrix strassenProductWithMatrix: aPMMatrix transpose ] raise: AssertionFailure.
+
 ]
 
 { #category : #tests }

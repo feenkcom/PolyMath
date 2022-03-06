@@ -94,6 +94,11 @@ PMConstant class >> gasConstant [
 ]
 
 { #category : #constants }
+PMConstant class >> gravitationalConstant [
+	^ gravitationalConstant
+]
+
+{ #category : #constants }
 PMConstant class >> h [
 	^ PlanckConstant
 ]
